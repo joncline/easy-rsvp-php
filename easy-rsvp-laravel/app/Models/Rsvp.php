@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Vinkla\Hashids\Facades\Hashids;
 
 class Rsvp extends Model
@@ -23,6 +24,11 @@ class Rsvp extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function customFieldResponses(): HasMany
+    {
+        return $this->hasMany(CustomFieldResponse::class);
     }
 
     public function getHashidAttribute(): string

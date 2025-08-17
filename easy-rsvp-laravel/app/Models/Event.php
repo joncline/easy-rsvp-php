@@ -40,6 +40,11 @@ class Event extends Model
         return $this->hasMany(Rsvp::class);
     }
 
+    public function customFields(): HasMany
+    {
+        return $this->hasMany(CustomField::class)->ordered();
+    }
+
     public function getHashidAttribute(): string
     {
         return Hashids::encode($this->id);

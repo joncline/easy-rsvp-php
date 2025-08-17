@@ -30,6 +30,8 @@ class EventAdminController extends Controller
             return redirect()->route('events.new')->with('alert', 'Invalid admin access.');
         }
 
+        $event->load('customFields');
+
         return view('events.admin.edit', compact('event'));
     }
 
@@ -46,10 +48,61 @@ class EventAdminController extends Controller
             'title' => 'required|string|max:255',
             'date' => 'required|date',
             'body' => 'nullable|string',
-            'show_rsvp_names' => 'boolean'
+            'show_rsvp_names' => 'boolean',
+            'custom_fields' => 'nullable|array',
+            'custom_fields.*.name' => 'required|string|max:255',
+            'custom_fields.*.type' => 'required|in:text,number,select,multi_select,radio,checkbox,textarea',
+            'custom_fields.*.required' => 'boolean',
+            'custom_fields.*.options' => 'nullable|array',
+            'custom_fields.*.options.*' => 'string|max:255'
         ]);
 
         $event->update($request->only(['title', 'date', 'body', 'show_rsvp_names']));
+
+        // Handle custom fields updates
+        if ($request->has('custom_fields')) {
+            // Get existing custom field IDs
+            $existingFieldIds = $event->customFields->pluck('id')->toArray();
+            $updatedFieldIds = [];
+
+            foreach ($request->custom_fields as $index => $fieldData) {
+                if (!empty($fieldData['name'])) {
+                    if (isset($fieldData['id']) && in_array($fieldData['id'], $existingFieldIds)) {
+                        // Update existing custom field
+                        $customField = $event->customFields()->find($fieldData['id']);
+                        if ($customField) {
+                            $customField->update([
+                                'name' => $fieldData['name'],
+                                'type' => $fieldData['type'],
+                                'required' => $fieldData['required'] ?? false,
+                                'options' => $fieldData['options'] ?? null,
+                                'sort_order' => $index
+                            ]);
+                            $updatedFieldIds[] = $customField->id;
+                        }
+                    } else {
+                        // Create new custom field
+                        $customField = $event->customFields()->create([
+                            'name' => $fieldData['name'],
+                            'type' => $fieldData['type'],
+                            'required' => $fieldData['required'] ?? false,
+                            'options' => $fieldData['options'] ?? null,
+                            'sort_order' => $index
+                        ]);
+                        $updatedFieldIds[] = $customField->id;
+                    }
+                }
+            }
+
+            // Delete custom fields that were removed
+            $fieldsToDelete = array_diff($existingFieldIds, $updatedFieldIds);
+            if (!empty($fieldsToDelete)) {
+                $event->customFields()->whereIn('id', $fieldsToDelete)->delete();
+            }
+        } else {
+            // If no custom fields in request, delete all existing ones
+            $event->customFields()->delete();
+        }
 
         return redirect()->route('events.admin.show', ['event' => $event->toParam(), 'admin_token' => $adminToken])
             ->with('success', 'Event updated successfully!');

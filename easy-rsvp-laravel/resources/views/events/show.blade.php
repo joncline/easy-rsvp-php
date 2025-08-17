@@ -24,23 +24,109 @@
     <small>Guest names are hidden to other guests.</small>
 @endunless
 
-<p>
-    <form method="POST" action="{{ route('rsvps.create', $event->toParam()) }}" class="d-inline-flex align-items-center gap-2 {{ $responded ? 'd-none' : '' }}" id="rsvp-form">
+<div class="rsvp-section">
+    <form method="POST" action="{{ route('rsvps.create', $event->toParam()) }}" class="{{ $responded ? 'd-none' : '' }}" id="rsvp-form">
         @csrf
-        <label for="name" class="form-label mb-0">Your name:</label>
-        <input type="text" name="name" id="name" class="form-control" style="width: auto;">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Your name:</label>
+                <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}">
+                @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
 
-        @foreach(\App\Models\Rsvp::RESPONSES as $response)
-            <button type="submit" name="response" value="{{ $response }}" class="btn btn-primary">
-                {{ ucfirst($response) }}
-            </button>
-        @endforeach
+        @if($event->customFields->count() > 0)
+            <div class="custom-fields-section mb-3">
+                <h5>Additional Information</h5>
+                @foreach($event->customFields as $field)
+                    <div class="mb-3">
+                        <label class="form-label">
+                            {{ $field->name }}
+                            @if($field->required)
+                                <span class="text-danger">*</span>
+                            @endif
+                        </label>
+                        
+                        @php
+                            $fieldName = "custom_field_{$field->id}";
+                            $oldValue = old($fieldName);
+                        @endphp
+
+                        @if($field->type === 'text')
+                            <input type="text" name="{{ $fieldName }}" class="form-control @error($fieldName) is-invalid @enderror" value="{{ $oldValue }}">
+                        
+                        @elseif($field->type === 'number')
+                            <input type="number" name="{{ $fieldName }}" class="form-control @error($fieldName) is-invalid @enderror" value="{{ $oldValue }}">
+                        
+                        @elseif($field->type === 'textarea')
+                            <textarea name="{{ $fieldName }}" class="form-control @error($fieldName) is-invalid @enderror" rows="3">{{ $oldValue }}</textarea>
+                        
+                        @elseif($field->type === 'select')
+                            <select name="{{ $fieldName }}" class="form-control @error($fieldName) is-invalid @enderror">
+                                <option value="">Choose an option...</option>
+                                @foreach($field->options_list as $option)
+                                    <option value="{{ $option }}" {{ $oldValue === $option ? 'selected' : '' }}>{{ $option }}</option>
+                                @endforeach
+                            </select>
+                        
+                        @elseif($field->type === 'radio')
+                            @foreach($field->options_list as $option)
+                                <div class="form-check">
+                                    <input type="radio" name="{{ $fieldName }}" value="{{ $option }}" class="form-check-input" id="{{ $fieldName }}_{{ $loop->index }}" {{ $oldValue === $option ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="{{ $fieldName }}_{{ $loop->index }}">{{ $option }}</label>
+                                </div>
+                            @endforeach
+                        
+                        @elseif($field->type === 'multi_select')
+                            @foreach($field->options_list as $option)
+                                <div class="form-check">
+                                    <input type="checkbox" name="{{ $fieldName }}[]" value="{{ $option }}" class="form-check-input" id="{{ $fieldName }}_{{ $loop->index }}" {{ is_array($oldValue) && in_array($option, $oldValue) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="{{ $fieldName }}_{{ $loop->index }}">{{ $option }}</label>
+                                </div>
+                            @endforeach
+                        
+                        @elseif($field->type === 'checkbox')
+                            @if(count($field->options_list) === 1)
+                                <div class="form-check">
+                                    <input type="checkbox" name="{{ $fieldName }}" value="{{ $field->options_list[0] }}" class="form-check-input" id="{{ $fieldName }}" {{ $oldValue ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="{{ $fieldName }}">{{ $field->options_list[0] }}</label>
+                                </div>
+                            @else
+                                @foreach($field->options_list as $option)
+                                    <div class="form-check">
+                                        <input type="checkbox" name="{{ $fieldName }}[]" value="{{ $option }}" class="form-check-input" id="{{ $fieldName }}_{{ $loop->index }}" {{ is_array($oldValue) && in_array($option, $oldValue) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="{{ $fieldName }}_{{ $loop->index }}">{{ $option }}</label>
+                                    </div>
+                                @endforeach
+                            @endif
+                        @endif
+
+                        @error($fieldName)
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        <div class="mb-3">
+            <label class="form-label">Your response:</label>
+            <div class="btn-group" role="group">
+                @foreach(\App\Models\Rsvp::RESPONSES as $response)
+                    <button type="submit" name="response" value="{{ $response }}" class="btn btn-primary">
+                        {{ ucfirst($response) }}
+                    </button>
+                @endforeach
+            </div>
+        </div>
     </form>
 
     @if($responded)
-        <span id="rsvp-again"><a href="#" onclick="document.getElementById('rsvp-form').classList.remove('d-none'); this.parentElement.classList.add('d-none'); return false;">RSVP again</a></span>
+        <p id="rsvp-again"><a href="#" onclick="document.getElementById('rsvp-form').classList.remove('d-none'); this.parentElement.classList.add('d-none'); return false;">RSVP again</a></p>
     @endif
-</p>
+</div>
 
 @foreach(\App\Models\Rsvp::RESPONSES as $response)
     @php
@@ -54,7 +140,7 @@
             @foreach($responseRsvps as $rsvp)
                 @if($event->show_rsvp_names)
                     <li>
-                        {{ $rsvp->name }}
+                        <strong>{{ $rsvp->name }}</strong>
 
                         @if(in_array($rsvp->hashid, session($event->hashid, [])))
                             <small>
@@ -65,10 +151,20 @@
                                 </form>
                             </small>
                         @endif
+
+                        @if($rsvp->customFieldResponses->count() > 0)
+                            <div class="mt-1 ms-3">
+                                @foreach($rsvp->customFieldResponses as $response)
+                                    <small class="text-muted d-block">
+                                        <strong>{{ $response->customField->name }}:</strong> {{ $response->formatted_value }}
+                                    </small>
+                                @endforeach
+                            </div>
+                        @endif
                     </li>
                 @elseif(in_array($rsvp->hashid, session($event->hashid, [])))
                     <li>
-                        {{ $rsvp->name }}
+                        <strong>{{ $rsvp->name }}</strong>
 
                         <small>
                             [<a href="#" onclick="event.preventDefault(); document.getElementById('delete-rsvp-{{ $rsvp->id }}').submit();">x</a>]
@@ -77,6 +173,16 @@
                                 @method('DELETE')
                             </form>
                         </small>
+
+                        @if($rsvp->customFieldResponses->count() > 0)
+                            <div class="mt-1 ms-3">
+                                @foreach($rsvp->customFieldResponses as $response)
+                                    <small class="text-muted d-block">
+                                        <strong>{{ $response->customField->name }}:</strong> {{ $response->formatted_value }}
+                                    </small>
+                                @endforeach
+                            </div>
+                        @endif
                     </li>
                 @endif
             @endforeach

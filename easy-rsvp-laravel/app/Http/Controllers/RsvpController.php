@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Rsvp;
+use App\Models\CustomFieldResponse;
 use Illuminate\Http\Request;
 use Vinkla\Hashids\Facades\Hashids;
 
@@ -18,12 +19,51 @@ class RsvpController extends Controller
             return redirect()->route('events.new')->with('alert', 'Event not found.');
         }
 
-        $request->validate([
+        // Build validation rules
+        $rules = [
             'name' => 'required|string|max:255',
             'response' => 'required|in:yes,maybe,no'
-        ]);
+        ];
+
+        // Add validation rules for custom fields
+        foreach ($event->customFields as $field) {
+            $fieldKey = "custom_field_{$field->id}";
+            
+            if ($field->required) {
+                $rules[$fieldKey] = 'required';
+            }
+            
+            if ($field->type === 'number') {
+                $rules[$fieldKey] = ($field->required ? 'required|' : 'nullable|') . 'numeric';
+            } elseif ($field->type === 'multi_select' || $field->type === 'checkbox') {
+                $rules[$fieldKey] = ($field->required ? 'required|' : 'nullable|') . 'array';
+                $rules[$fieldKey . '.*'] = 'string';
+            } else {
+                $rules[$fieldKey] = ($field->required ? 'required|' : 'nullable|') . 'string|max:1000';
+            }
+        }
+
+        $request->validate($rules);
 
         $rsvp = $event->rsvps()->create($request->only(['name', 'response']));
+
+        // Save custom field responses
+        foreach ($event->customFields as $field) {
+            $fieldKey = "custom_field_{$field->id}";
+            $value = $request->input($fieldKey);
+            
+            if ($value !== null && $value !== '') {
+                // Handle multi-value fields
+                if (is_array($value)) {
+                    $value = json_encode(array_values($value));
+                }
+                
+                $rsvp->customFieldResponses()->create([
+                    'custom_field_id' => $field->id,
+                    'value' => $value
+                ]);
+            }
+        }
 
         // Store RSVP hashid in session for tracking
         $userRsvpHashids = session($event->hashid, []);

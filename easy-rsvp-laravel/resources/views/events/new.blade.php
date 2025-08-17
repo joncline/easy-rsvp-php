@@ -48,6 +48,118 @@
 
     <br>
 
+    <!-- Custom Fields Section -->
+    <div class="mb-4">
+        <h4>Custom Fields <small class="text-muted">(Optional)</small></h4>
+        <p class="text-muted">Add custom questions for your guests to answer when they RSVP.</p>
+        
+        <div id="custom-fields-container">
+            <!-- Custom fields will be added here dynamically -->
+        </div>
+        
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="add-custom-field">
+            + Add Custom Field
+        </button>
+    </div>
+
+    <br>
+
     <button type="submit" class="btn btn-primary me-2">Create your event, for free!</button>
 </form>
+
+<script>
+let fieldIndex = 0;
+
+document.getElementById('add-custom-field').addEventListener('click', function() {
+    const container = document.getElementById('custom-fields-container');
+    const fieldHtml = `
+        <div class="custom-field-item border rounded p-3 mb-3" data-index="${fieldIndex}">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Field Name</label>
+                    <input type="text" name="custom_fields[${fieldIndex}][name]" class="form-control" placeholder="e.g., Food preference">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Field Type</label>
+                    <select name="custom_fields[${fieldIndex}][type]" class="form-control field-type-select">
+                        <option value="text">Text Field</option>
+                        <option value="number">Number Field</option>
+                        <option value="textarea">Textarea</option>
+                        <option value="select">Select/Dropdown</option>
+                        <option value="multi_select">Multi-Select</option>
+                        <option value="radio">Radio Buttons</option>
+                        <option value="checkbox">Checkbox</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <div>
+                        <button type="button" class="btn btn-danger btn-sm remove-field">Remove</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input type="checkbox" name="custom_fields[${fieldIndex}][required]" value="1" class="form-check-input" id="required_${fieldIndex}">
+                        <label class="form-check-label" for="required_${fieldIndex}">Required field</label>
+                    </div>
+                </div>
+            </div>
+            <div class="options-container mt-2" style="display: none;">
+                <label class="form-label">Options (one per line)</label>
+                <textarea name="custom_fields[${fieldIndex}][options_text]" class="form-control options-textarea" rows="3" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', fieldHtml);
+    fieldIndex++;
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-field')) {
+        e.target.closest('.custom-field-item').remove();
+    }
+});
+
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('field-type-select')) {
+        const optionsContainer = e.target.closest('.custom-field-item').querySelector('.options-container');
+        const fieldType = e.target.value;
+        
+        if (['select', 'multi_select', 'radio', 'checkbox'].includes(fieldType)) {
+            optionsContainer.style.display = 'block';
+        } else {
+            optionsContainer.style.display = 'none';
+        }
+    }
+});
+
+// Convert options text to array before form submission
+document.querySelector('form').addEventListener('submit', function(e) {
+    const optionsTextareas = document.querySelectorAll('.options-textarea');
+    optionsTextareas.forEach(function(textarea) {
+        const fieldItem = textarea.closest('.custom-field-item');
+        const index = fieldItem.dataset.index;
+        const optionsText = textarea.value.trim();
+        
+        if (optionsText) {
+            const options = optionsText.split('\n').map(opt => opt.trim()).filter(opt => opt);
+            
+            // Remove existing option inputs
+            fieldItem.querySelectorAll('input[name*="[options]"]').forEach(input => input.remove());
+            
+            // Add option inputs
+            options.forEach(function(option, optIndex) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `custom_fields[${index}][options][${optIndex}]`;
+                hiddenInput.value = option;
+                fieldItem.appendChild(hiddenInput);
+            });
+        }
+    });
+});
+</script>
 @endsection
