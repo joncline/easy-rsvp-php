@@ -198,7 +198,7 @@ GEM
       actionview
       octicons (= 19.15.1)
       railties
-    pg (1.5.9)
+    pg (1.6.1)
     popper_js (1.16.1)
     pp (0.6.2)
       prettyprint
