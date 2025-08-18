@@ -62,6 +62,60 @@
         </button>
     </div>
 
+    <!-- Security Question Section -->
+    <div class="mb-4">
+        <h4>Admin URL Recovery <small class="text-muted">(Optional)</small></h4>
+        <p class="text-muted">Set a security question in case you forget your admin URL. This will help you recover access to manage your event.</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <label for="security_question" class="form-label">Security Question</label>
+                <select class="form-control @error('security_question') is-invalid @enderror" 
+                        id="security_question" 
+                        name="security_question">
+                    <option value="">Choose a security question (optional)</option>
+                    <option value="What is your mother's maiden name?" {{ old('security_question') == "What is your mother's maiden name?" ? 'selected' : '' }}>What is your mother's maiden name?</option>
+                    <option value="What was the name of your first pet?" {{ old('security_question') == "What was the name of your first pet?" ? 'selected' : '' }}>What was the name of your first pet?</option>
+                    <option value="What city were you born in?" {{ old('security_question') == "What city were you born in?" ? 'selected' : '' }}>What city were you born in?</option>
+                    <option value="What is your favorite movie?" {{ old('security_question') == "What is your favorite movie?" ? 'selected' : '' }}>What is your favorite movie?</option>
+                    <option value="What was your childhood nickname?" {{ old('security_question') == "What was your childhood nickname?" ? 'selected' : '' }}>What was your childhood nickname?</option>
+                    <option value="What is the name of your favorite teacher?" {{ old('security_question') == "What is the name of your favorite teacher?" ? 'selected' : '' }}>What is the name of your favorite teacher?</option>
+                    <option value="custom">Custom question</option>
+                </select>
+                @error('security_question')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-md-6">
+                <label for="security_answer" class="form-label">Your Answer</label>
+                <input type="text" 
+                       class="form-control @error('security_answer') is-invalid @enderror" 
+                       id="security_answer" 
+                       name="security_answer" 
+                       value="{{ old('security_answer') }}" 
+                       placeholder="Enter your answer">
+                @error('security_answer')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+        
+        <div class="mt-2" id="custom_question_container" style="display: none;">
+            <label for="custom_security_question" class="form-label">Custom Security Question</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="custom_security_question" 
+                   placeholder="Enter your custom security question">
+        </div>
+        
+        <small class="text-muted">
+            <i class="fas fa-info-circle"></i> 
+            If you set a security question, you can recover your admin URL by visiting 
+            <a href="{{ route('admin.recovery') }}" target="_blank">/recover-admin</a> 
+            and providing your event details and security answer.
+        </small>
+    </div>
+
     <br>
 
     <button type="submit" class="btn btn-primary me-2">Create your event, for free!</button>
@@ -136,8 +190,31 @@ document.addEventListener('change', function(e) {
     }
 });
 
+// Handle security question custom option
+document.getElementById('security_question').addEventListener('change', function() {
+    const customContainer = document.getElementById('custom_question_container');
+    const customInput = document.getElementById('custom_security_question');
+    
+    if (this.value === 'custom') {
+        customContainer.style.display = 'block';
+        customInput.required = true;
+    } else {
+        customContainer.style.display = 'none';
+        customInput.required = false;
+        customInput.value = '';
+    }
+});
+
 // Convert options text to array before form submission
 document.querySelector('form').addEventListener('submit', function(e) {
+    // Handle custom security question
+    const securityQuestionSelect = document.getElementById('security_question');
+    const customQuestionInput = document.getElementById('custom_security_question');
+    
+    if (securityQuestionSelect.value === 'custom' && customQuestionInput.value.trim()) {
+        securityQuestionSelect.value = customQuestionInput.value.trim();
+    }
+    
     const optionsTextareas = document.querySelectorAll('.options-textarea');
     optionsTextareas.forEach(function(textarea) {
         const fieldItem = textarea.closest('.custom-field-item');

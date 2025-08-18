@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Controllers\AdminRecoveryController;
 
 // Root route - new event form
 Route::get('/', [EventController::class, 'new'])->name('events.new');
@@ -22,3 +23,7 @@ Route::get('/{event}/admin/{admin_token}/edit', [EventAdminController::class, 'e
 Route::put('/{event}/admin/{admin_token}', [EventAdminController::class, 'update'])->name('events.admin.update');
 Route::delete('/{event}/admin/{admin_token}', [EventAdminController::class, 'destroy'])->name('events.admin.destroy');
 Route::post('/{event}/admin/{admin_token}/toggle-publish', [EventAdminController::class, 'togglePublish'])->name('events.admin.toggle_publish');
+
+// Admin recovery routes
+Route::get('/recover-admin', [AdminRecoveryController::class, 'show'])->name('admin.recovery');
+Route::post('/recover-admin', [AdminRecoveryController::class, 'recover'])->name('admin.recovery.submit');

@@ -49,6 +49,8 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'date' => 'required|date',
             'body' => 'nullable|string',
+            'security_question' => 'nullable|string|max:255',
+            'security_answer' => 'nullable|string|max:255',
             'custom_fields' => 'nullable|array',
             'custom_fields.*.name' => 'required|string|max:255',
             'custom_fields.*.type' => 'required|in:text,number,select,multi_select,radio,checkbox,textarea',
@@ -57,7 +59,16 @@ class EventController extends Controller
             'custom_fields.*.options.*' => 'string|max:255'
         ]);
 
-        $event = Event::create($request->only(['title', 'date', 'body']));
+        // Validate that if security_question is provided, security_answer must also be provided
+        if ($request->filled('security_question') && !$request->filled('security_answer')) {
+            return back()->withErrors(['security_answer' => 'Security answer is required when security question is provided.'])->withInput();
+        }
+
+        if ($request->filled('security_answer') && !$request->filled('security_question')) {
+            return back()->withErrors(['security_question' => 'Security question is required when security answer is provided.'])->withInput();
+        }
+
+        $event = Event::create($request->only(['title', 'date', 'body', 'security_question', 'security_answer']));
 
         // Create custom fields if provided
         if ($request->has('custom_fields')) {

@@ -15,13 +15,16 @@ class Event extends Model
         'body',
         'admin_token',
         'show_rsvp_names',
-        'published'
+        'published',
+        'security_question',
+        'security_answer'
     ];
 
     protected $casts = [
         'date' => 'date',
         'show_rsvp_names' => 'boolean',
-        'published' => 'boolean'
+        'published' => 'boolean',
+        'security_answer' => 'encrypted'
     ];
 
     protected static function boot()
