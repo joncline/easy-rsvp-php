@@ -32,8 +32,11 @@ This application was originally developed as a Ruby on Rails application and has
 ## 🌟 Features
 
 - **Event Creation**: Create events with custom descriptions, dates, and settings
+- **Time Management**: Optional start and end times for precise event scheduling
+- **Google Calendar Integration**: One-click "Add to Calendar" functionality for events with times
 - **RSVP Management**: Guests can easily respond to invitations via unique URLs
 - **Admin Dashboard**: Manage events and view RSVP responses
+- **Admin URL Recovery**: Security question system to recover lost admin URLs
 - **Custom Fields**: Add custom questions for event-specific information
 - **Rich Text Editor**: Use Trix editor for event descriptions
 - **Responsive Design**: Bootstrap 5.1.3 for mobile-friendly interface
@@ -235,12 +238,32 @@ easy-rsvp-main/
 1. Visit your application's homepage
 2. Fill in event details:
    - Event name and description (supports rich text)
-   - Date, time, and location
-   - RSVP deadline
+   - Date and optional start/end times
    - Custom questions for guests
+   - Admin URL recovery security question (optional)
 3. Click "Create Event"
 4. Share the generated RSVP URL with guests
 5. Use the admin URL to manage responses
+
+### Time Management & Calendar Integration
+
+**Event Times (Optional)**
+- Add start and end times to your events for precise scheduling
+- Times are displayed in user-friendly format (e.g., "6:00 PM - 9:00 PM")
+- End time validation ensures it's after the start time
+
+**Google Calendar Integration**
+- Events with start times automatically show "📅 Add to Google Calendar" button
+- One-click calendar integration for guests
+- Automatically includes event title, description, date, and times
+- Generates proper UTC timestamps for accurate calendar entries
+
+**Admin URL Recovery**
+- Set a security question when creating events
+- Recover lost admin URLs by visiting `/recover-admin` on your domain
+- Provide event details and security answer to regain access
+- Encrypted storage of security answers for protection
+- Example: `https://yourdomain.com/recover-admin`
 
 ### Managing RSVPs
 
@@ -293,12 +316,22 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ## 🏆 Acknowledgments
 
-- **Original Concept**: Inspired by the need for simple, no-account RSVP management
+- **Original Creator**: [Kevin Bongart](http://kevinbongart.net) for the original Ruby on Rails Easy RSVP application
+- **PHP Port**: Developed by [Jon Cline](https://www.linkedin.com/in/joncline) - Laravel migration and enhancements
 - **Framework**: Built with [Laravel](https://laravel.com) - The PHP Framework for Web Artisans
 - **UI Framework**: Powered by [Bootstrap](https://getbootstrap.com) for responsive design
 - **Rich Text**: [Trix Editor](https://trix-editor.org) for beautiful event descriptions
 - **Hosting**: Successfully deployed on [DreamHost](https://www.dreamhost.com) shared hosting
 - **Community**: Thanks to the Laravel and PHP communities for excellent documentation and support
+
+### Recent Enhancements
+
+**Version 2.0 Features** (Added by Jon Cline):
+- ⏰ **Time Management**: Optional start and end times for events
+- 📅 **Google Calendar Integration**: One-click "Add to Calendar" functionality
+- 🔐 **Admin URL Recovery**: Security question system for lost admin URLs
+- 🎨 **Enhanced UI**: Improved form layouts and user experience
+- 🔧 **Better Validation**: Enhanced form validation and error handling
 
 ---
 
