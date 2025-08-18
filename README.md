@@ -43,7 +43,7 @@ This application was originally developed as a Ruby on Rails application and has
 ## 📜 Original Repository
 
 This is a Laravel port of the original Easy RSVP Ruby on Rails application:
-**https://github.com/joncline/easy-rsvp-main**
+**https://github.com/KevinBongart/easy-rsvp**
 
 ## 🛠️ Technology Stack
 
@@ -303,5 +303,5 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ---
 
 **Repository**: https://github.com/joncline/easy-rsvp-php  
-**Original Ruby on Rails Version**: https://github.com/joncline/easy-rsvp-main  
+**Original Ruby on Rails Version**: https://github.com/KevinBongart/easy-rsvp  
 **Framework**: Laravel 12.0 | **PHP**: 8.2+ | **Database**: MySQL
