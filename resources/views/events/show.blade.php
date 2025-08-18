@@ -8,9 +8,9 @@
         //
         {{ $event->date->format('l, F j, Y') }}
         @if($event->start_time)
-            at {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}
+            at {{ date('g:i A', strtotime($event->start_time)) }}
             @if($event->end_time)
-                - {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
+                - {{ date('g:i A', strtotime($event->end_time)) }}
             @endif
         @endif
     </small>

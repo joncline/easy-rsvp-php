@@ -24,8 +24,6 @@ class Event extends Model
 
     protected $casts = [
         'date' => 'date',
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i',
         'show_rsvp_names' => 'boolean',
         'published' => 'boolean',
         'security_answer' => 'encrypted'

@@ -117,8 +117,8 @@ class EventController extends Controller
         $details = urlencode(strip_tags($event->body ?? ''));
         
         // Create start and end datetime strings
-        $startDateTime = $event->date->format('Y-m-d') . 'T' . $event->start_time . ':00';
-        $endDateTime = $event->date->format('Y-m-d') . 'T' . ($event->end_time ?? $event->start_time) . ':00';
+        $startDateTime = $event->date->format('Y-m-d') . ' ' . $event->start_time;
+        $endDateTime = $event->date->format('Y-m-d') . ' ' . ($event->end_time ?? $event->start_time);
         
         // Convert to UTC format for Google Calendar
         $startUtc = \Carbon\Carbon::parse($startDateTime)->utc()->format('Ymd\THis\Z');
