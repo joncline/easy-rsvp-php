@@ -25,9 +25,31 @@ class Event extends Model
     protected $casts = [
         'date' => 'date',
         'show_rsvp_names' => 'boolean',
-        'published' => 'boolean',
-        'security_answer' => 'encrypted'
+        'published' => 'boolean'
     ];
+
+    // Encrypt security_answer when saving
+    public function setSecurityAnswerAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['security_answer'] = encrypt($value);
+        } else {
+            $this->attributes['security_answer'] = null;
+        }
+    }
+
+    // Decrypt security_answer when retrieving
+    public function getSecurityAnswerAttribute($value)
+    {
+        if ($value) {
+            try {
+                return decrypt($value);
+            } catch (\Exception $e) {
+                return $value; // Return as-is if decryption fails
+            }
+        }
+        return $value;
+    }
 
     protected static function boot()
     {
