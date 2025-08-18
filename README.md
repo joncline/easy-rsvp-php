@@ -40,9 +40,10 @@ This application was originally developed as a Ruby on Rails application and has
 - **Secure**: Environment-based configuration with protected credentials
 - **No Dependencies**: Uses CDN assets - no Node.js build process required
 
-## 🚀 Live Demo
+## 📜 Original Repository
 
-The application is deployed and running at: **https://rsvp.joncline.com**
+This is a Laravel port of the original Easy RSVP Ruby on Rails application:
+**https://github.com/joncline/easy-rsvp-main**
 
 ## 🛠️ Technology Stack
 
@@ -83,8 +84,8 @@ This application is specifically optimized for shared hosting providers:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/joncline/easy-rsvp-main.git
-   cd easy-rsvp-main
+   git clone https://github.com/joncline/easy-rsvp-php.git
+   cd easy-rsvp-php
    ```
 
 2. **Install dependencies**
@@ -301,6 +302,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ---
 
-**Live Application**: https://rsvp.joncline.com  
-**Repository**: https://github.com/joncline/easy-rsvp-main  
+**Repository**: https://github.com/joncline/easy-rsvp-php  
+**Original Ruby on Rails Version**: https://github.com/joncline/easy-rsvp-main  
 **Framework**: Laravel 12.0 | **PHP**: 8.2+ | **Database**: MySQL
