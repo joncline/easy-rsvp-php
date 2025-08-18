@@ -66,7 +66,9 @@
         <div class="text-end text-muted mt-5">
             <hr>
             <p class="small">
-                Easy RSVP is an
+                Easy RSVP PHP port by
+                <a href="https://www.linkedin.com/in/joncline" target="_blank">Jon Cline</a>.
+                Originally an
                 <a href="https://github.com/KevinBongart/easy-rsvp">open-source</a>
                 app made with care by
                 <a href="http://kevinbongart.net">Kevin Bongart</a>.
