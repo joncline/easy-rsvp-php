@@ -29,7 +29,13 @@ class EventController extends Controller
             return in_array($rsvp->hashid, $userRsvpHashids);
         });
 
-        return view('events.show', compact('event', 'rsvp', 'rsvps', 'responded'));
+        // Generate Google Calendar URL if event has time
+        $googleCalendarUrl = null;
+        if ($event->start_time) {
+            $googleCalendarUrl = $this->generateGoogleCalendarUrl($event);
+        }
+
+        return view('events.show', compact('event', 'rsvp', 'rsvps', 'responded', 'googleCalendarUrl'));
     }
 
     public function new()
@@ -48,6 +54,8 @@ class EventController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i',
             'body' => 'nullable|string',
             'security_question' => 'nullable|string|max:255',
             'security_answer' => 'nullable|string|max:255',
@@ -59,6 +67,13 @@ class EventController extends Controller
             'custom_fields.*.options.*' => 'string|max:255'
         ]);
 
+        // Custom validation for end_time after start_time
+        if ($request->filled('start_time') && $request->filled('end_time')) {
+            if ($request->end_time <= $request->start_time) {
+                return back()->withErrors(['end_time' => 'End time must be after start time.'])->withInput();
+            }
+        }
+
         // Validate that if security_question is provided, security_answer must also be provided
         if ($request->filled('security_question') && !$request->filled('security_answer')) {
             return back()->withErrors(['security_answer' => 'Security answer is required when security question is provided.'])->withInput();
@@ -68,7 +83,7 @@ class EventController extends Controller
             return back()->withErrors(['security_question' => 'Security question is required when security answer is provided.'])->withInput();
         }
 
-        $event = Event::create($request->only(['title', 'date', 'body', 'security_question', 'security_answer']));
+        $event = Event::create($request->only(['title', 'date', 'start_time', 'end_time', 'body', 'security_question', 'security_answer']));
 
         // Create custom fields if provided
         if ($request->has('custom_fields')) {
@@ -94,5 +109,23 @@ class EventController extends Controller
     private function hashidFromParam($parameterizedId)
     {
         return explode('-', $parameterizedId)[0];
+    }
+
+    private function generateGoogleCalendarUrl(Event $event)
+    {
+        $title = urlencode($event->title);
+        $details = urlencode(strip_tags($event->body ?? ''));
+        
+        // Create start and end datetime strings
+        $startDateTime = $event->date->format('Y-m-d') . 'T' . $event->start_time . ':00';
+        $endDateTime = $event->date->format('Y-m-d') . 'T' . ($event->end_time ?? $event->start_time) . ':00';
+        
+        // Convert to UTC format for Google Calendar
+        $startUtc = \Carbon\Carbon::parse($startDateTime)->utc()->format('Ymd\THis\Z');
+        $endUtc = \Carbon\Carbon::parse($endDateTime)->utc()->format('Ymd\THis\Z');
+        
+        $dates = $startUtc . '/' . $endUtc;
+        
+        return "https://calendar.google.com/calendar/render?action=TEMPLATE&text={$title}&dates={$dates}&details={$details}";
     }
 }

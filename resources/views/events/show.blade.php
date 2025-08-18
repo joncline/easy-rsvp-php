@@ -7,12 +7,26 @@
     <small class="text-muted">
         //
         {{ $event->date->format('l, F j, Y') }}
+        @if($event->start_time)
+            at {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}
+            @if($event->end_time)
+                - {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
+            @endif
+        @endif
     </small>
 
     @if(config('app.env') === 'local')
         <small><a href="{{ route('events.admin.show', ['event' => $event->toParam(), 'admin_token' => $event->admin_token]) }}">admin</a></small>
     @endif
 </h1>
+
+@if($event->start_time)
+    <div class="mb-3">
+        <a href="{{ $googleCalendarUrl }}" target="_blank" class="btn btn-outline-primary btn-sm">
+            📅 Add to Google Calendar
+        </a>
+    </div>
+@endif
 
 <div class="trix-content">{!! $event->body !!}</div>
 
