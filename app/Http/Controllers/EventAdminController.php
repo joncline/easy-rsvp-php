@@ -47,6 +47,8 @@ class EventAdminController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i',
             'body' => 'nullable|string',
             'show_rsvp_names' => 'boolean',
             'custom_fields' => 'nullable|array',
@@ -57,7 +59,14 @@ class EventAdminController extends Controller
             'custom_fields.*.options.*' => 'string|max:255'
         ]);
 
-        $event->update($request->only(['title', 'date', 'body', 'show_rsvp_names']));
+        // Custom validation for end_time after start_time
+        if ($request->filled('start_time') && $request->filled('end_time')) {
+            if ($request->end_time <= $request->start_time) {
+                return back()->withErrors(['end_time' => 'End time must be after start time.'])->withInput();
+            }
+        }
+
+        $event->update($request->only(['title', 'date', 'start_time', 'end_time', 'body', 'show_rsvp_names']));
 
         // Handle custom fields updates
         if ($request->has('custom_fields')) {
