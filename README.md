@@ -172,12 +172,22 @@ This application is specifically optimized for shared hosting providers:
    php artisan route:cache
    ```
 
-## 🌐 Deployment Guides
+## 📚 Documentation
 
-This repository includes comprehensive deployment documentation:
+This repository includes comprehensive documentation for development, deployment, and operations:
 
+### Development Documentation
+- **[LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md)** - Complete local development setup with MySQL configuration
+- **[CLINE_WORKFLOWS.md](CLINE_WORKFLOWS.md)** - AI-assisted development workflows and best practices
+
+### Deployment Documentation
 - **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Complete step-by-step deployment instructions
+- **[DEPLOYMENT_AUTOMATION.md](DEPLOYMENT_AUTOMATION.md)** - VS Code deploy extension and SSH automation setup
 - **[DREAMHOST_COMPATIBILITY.md](DREAMHOST_COMPATIBILITY.md)** - DreamHost-specific deployment guide
+
+### Operations Documentation
+- **[OPERATIONAL_RULES.md](OPERATIONAL_RULES.md)** - Comprehensive operational procedures and rules
+- **[MAINTENANCE_SCHEDULE.md](MAINTENANCE_SCHEDULE.md)** - Regular maintenance procedures and schedules
 - **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Common issues and solutions
 - **[SECURITY_NOTES.md](SECURITY_NOTES.md)** - Security configuration and best practices
 
@@ -300,9 +310,14 @@ This project is open-sourced software licensed under the [MIT license](https://o
 ## 🆘 Support
 
 ### Documentation
-- [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - Complete deployment instructions
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
-- [SECURITY_NOTES.md](SECURITY_NOTES.md) - Security best practices
+- **Development**: [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md) - Local setup and testing
+- **AI Workflows**: [CLINE_WORKFLOWS.md](CLINE_WORKFLOWS.md) - AI-assisted development procedures
+- **Deployment**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - Manual deployment instructions
+- **Automation**: [DEPLOYMENT_AUTOMATION.md](DEPLOYMENT_AUTOMATION.md) - Automated deployment setup
+- **Operations**: [OPERATIONAL_RULES.md](OPERATIONAL_RULES.md) - Operational procedures and standards
+- **Maintenance**: [MAINTENANCE_SCHEDULE.md](MAINTENANCE_SCHEDULE.md) - Regular maintenance procedures
+- **Troubleshooting**: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
+- **Security**: [SECURITY_NOTES.md](SECURITY_NOTES.md) - Security best practices
 
 ### Getting Help
 - **Issues**: Open a GitHub issue for bugs or feature requests
