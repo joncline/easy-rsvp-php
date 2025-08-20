@@ -38,6 +38,31 @@
         @enderror
     </div>
 
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="start_time" class="form-label">Start Time (optional)</label>
+            <input type="time" 
+                   class="form-control @error('start_time') is-invalid @enderror" 
+                   id="start_time" 
+                   name="start_time" 
+                   value="{{ old('start_time', $event->start_time ? $event->start_time->format('H:i') : '') }}">
+            @error('start_time')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="col-md-6">
+            <label for="end_time" class="form-label">End Time (optional)</label>
+            <input type="time" 
+                   class="form-control @error('end_time') is-invalid @enderror" 
+                   id="end_time" 
+                   name="end_time" 
+                   value="{{ old('end_time', $event->end_time ? $event->end_time->format('H:i') : '') }}">
+            @error('end_time')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+
     <div class="mb-3">
         <label for="body" class="form-label">Event Description</label>
         <input id="body" type="hidden" name="body" value="{{ old('body', $event->body) }}">
