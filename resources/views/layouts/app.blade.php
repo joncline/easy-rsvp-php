@@ -63,16 +63,20 @@
 
         @yield('content')
 
-        <div class="text-end text-muted mt-5">
+        <div class="text-center text-muted mt-5">
             <hr>
+            <p class="mb-2">
+                <strong>Easy RSVP PHP</strong> - A Laravel application by 
+                <a href="https://www.linkedin.com/in/joncline" target="_blank" class="text-decoration-none">
+                    <strong>Jon Cline</strong>
+                </a>
+            </p>
             <p class="small">
-                Easy RSVP PHP port by
-                <a href="https://www.linkedin.com/in/joncline" target="_blank">Jon Cline</a>.
-                Originally an
-                <a href="https://github.com/KevinBongart/easy-rsvp">open-source</a>
-                app made with care by
-                <a href="http://kevinbongart.net">Kevin Bongart</a>.
-                <a href="https://www.kevinbongart.net/projects/easy-rsvp.html">Learn more</a>.
+                Ported from the original 
+                <a href="https://github.com/KevinBongart/easy-rsvp" target="_blank">Easy RSVP</a>
+                Ruby on Rails application by
+                <a href="http://kevinbongart.net" target="_blank">Kevin Bongart</a>.
+                <a href="https://www.kevinbongart.net/projects/easy-rsvp.html" target="_blank">Learn more about the original</a>.
             </p>
         </div>
     </div>

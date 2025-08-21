@@ -116,15 +116,15 @@ class EventController extends Controller
         $title = urlencode($event->title);
         $details = urlencode(strip_tags($event->body ?? ''));
         
-        // Create start and end datetime strings
+        // Create start and end datetime strings in local time
         $startDateTime = $event->date->format('Y-m-d') . ' ' . $event->start_time;
         $endDateTime = $event->date->format('Y-m-d') . ' ' . ($event->end_time ?? $event->start_time);
         
-        // Convert to UTC format for Google Calendar
-        $startUtc = \Carbon\Carbon::parse($startDateTime)->utc()->format('Ymd\THis\Z');
-        $endUtc = \Carbon\Carbon::parse($endDateTime)->utc()->format('Ymd\THis\Z');
+        // Format for Google Calendar without timezone conversion (local time)
+        $startFormatted = \Carbon\Carbon::parse($startDateTime)->format('Ymd\THis');
+        $endFormatted = \Carbon\Carbon::parse($endDateTime)->format('Ymd\THis');
         
-        $dates = $startUtc . '/' . $endUtc;
+        $dates = $startFormatted . '/' . $endFormatted;
         
         return "https://calendar.google.com/calendar/render?action=TEMPLATE&text={$title}&dates={$dates}&details={$details}";
     }
