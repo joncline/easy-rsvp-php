@@ -16,7 +16,7 @@ class EventAdminController extends Controller
             return redirect()->route('events.new')->with('alert', 'Invalid admin access.');
         }
 
-        $rsvps = $event->rsvps()->persisted()->orderBy('created_at', 'asc')->get();
+        $rsvps = $event->rsvps()->persisted()->with('customFieldResponses.customField')->orderBy('created_at', 'asc')->get();
 
         return view('events.admin.show', compact('event', 'rsvps'));
     }

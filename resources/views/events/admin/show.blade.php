@@ -54,7 +54,19 @@
             <h4>{{ ucfirst($response) }} ({{ $responseRsvps->count() }})</h4>
             <ul>
                 @foreach($responseRsvps as $rsvp)
-                    <li>{{ $rsvp->name }} - <small class="text-muted">{{ $rsvp->created_at->format('M j, Y g:i A') }}</small></li>
+                    <li>
+                        <strong>{{ $rsvp->name }}</strong> - <small class="text-muted">{{ $rsvp->created_at->format('M j, Y g:i A') }}</small>
+                        @if($rsvp->customFieldResponses->count() > 0)
+                            <div class="mt-2 ms-3">
+                                @foreach($rsvp->customFieldResponses as $response)
+                                    <div class="mb-1">
+                                        <strong>{{ $response->customField->name }}:</strong> 
+                                        <span class="text-muted">{{ $response->formatted_value }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </li>
                 @endforeach
             </ul>
         @endif
